@@ -39,7 +39,7 @@ public class AuthController {
   /**
    * 회원가입
    * 성공 시 201 Created 반환
-   * 실패 시 예외 발생 (GlobalExceptionHandler에서 처리)
+   * 실패 시 예외 발생 (GlobalExceptionHandler에서 처리)..
    */
   @PostMapping("/signup")
   public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody SignupRequest signupRequest) {

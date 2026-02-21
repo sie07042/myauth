@@ -36,7 +36,7 @@ services:
     environment:
       # 데이터베이스 연결 설정
       # 기존 mysql-8 컨테이너 이름으로 접근 (같은 네트워크 내에서)
-      DB_URL: jdbc:mysql://mysql-8:3306/mannal?useSSL=false&serverTimezone=Asia/Seoul&connectionTimeZone=Asia/Seoul&forceConnectionTimeZoneToSession=true&allowPublicKeyRetrieval=true
+      DB_URL: jdbc:mysql://mysql-8:3306/sie07042?useSSL=false&serverTimezone=Asia/Seoul&connectionTimeZone=Asia/Seoul&forceConnectionTimeZoneToSession=true&allowPublicKeyRetrieval=true
       DB_USERNAME: root
       DB_PASSWORD: 1234
 

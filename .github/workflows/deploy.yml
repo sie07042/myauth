@@ -306,7 +306,7 @@ jobs:
             # - -u ${{ github.actor }}: 현재 작업 실행자의 GitHub ID로 로그인
             # - --password-stdin: 표준 입력(stdin)에서 비밀번호 읽기 (보안 강화)
             # - sudo: Docker daemon 접근을 위해 관리자 권한 필요
-            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # ===== 5. 최신 Docker 이미지 다운로드 =====
             # docker compose pull: 레지스트리에서 최신 이미지를 다운로드
@@ -318,7 +318,7 @@ jobs:
             # - mysql:8 (Docker Hub 공식 이미지)
             # - ghcr.io/{사용자명}/{저장소명}:latest (이전 단계에서 푸시한 이미지)
             # - sudo: Docker daemon 접근을 위해 관리자 권한 필요
-            sudo docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml pull
 
             # ===== 6. 컨테이너 시작/재시작 (무중단 배포) =====
             # docker compose up: 컨테이너 생성 및 시작
@@ -332,7 +332,7 @@ jobs:
             # 3. depends_on 설정에 따라 MySQL이 먼저 시작되고 healthy 상태가 되면 Backend가 시작됨
             # 4. MySQL 데이터는 prod-mysql-data 볼륨에 영구 보존됨
             # - sudo: Docker daemon 접근을 위해 관리자 권한 필요
-            sudo docker compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.prod.yml up -d
 
             # ===== 7. 사용하지 않는 이미지 정리 =====
             # docker image prune: 불필요한 이미지 삭제로 디스크 공간 확보
@@ -343,7 +343,7 @@ jobs:
             # - 이전 버전의 MySQL 및 Backend 이미지
             # - 태그가 없는 중간 레이어 이미지 (dangling images)
             # - sudo: Docker daemon 접근을 위해 관리자 권한 필요
-            sudo docker image prune -af
+            docker image prune -af
 
             # ===== 8. 배포 결과 확인 =====
             # docker compose ps: 실행 중인 컨테이너 상태 확인
@@ -352,7 +352,7 @@ jobs:
             # - 포트 바인딩, 상태(Up/Exited) 등 표시
             # - 이 출력은 GitHub Actions 로그에 기록됨
             # - sudo: Docker daemon 접근을 위해 관리자 권한 필요
-            sudo docker compose -f docker-compose.prod.yml ps
+            docker compose -f docker-compose.prod.yml ps
 
       # ========================================
       # 9. Slack 알림 (선택사항)

@@ -318,7 +318,7 @@ jobs:
             # - mysql:8 (Docker Hub 공식 이미지)
             # - ghcr.io/{사용자명}/{저장소명}:latest (이전 단계에서 푸시한 이미지)
             # - sudo: Docker daemon 접근을 위해 관리자 권한 필요
-            sudo docker compose -f docker-compose.prod.yml pull
+            sudo docker-compose -f docker-compose.prod.yml pull
 
             # ===== 6. 컨테이너 시작/재시작 (무중단 배포) =====
             # docker compose up: 컨테이너 생성 및 시작
@@ -332,7 +332,7 @@ jobs:
             # 3. depends_on 설정에 따라 MySQL이 먼저 시작되고 healthy 상태가 되면 Backend가 시작됨
             # 4. MySQL 데이터는 prod-mysql-data 볼륨에 영구 보존됨
             # - sudo: Docker daemon 접근을 위해 관리자 권한 필요
-            sudo docker compose -f docker-compose.prod.yml up -d
+            sudo docker-compose -f docker-compose.prod.yml up -d
 
             # ===== 7. 사용하지 않는 이미지 정리 =====
             # docker image prune: 불필요한 이미지 삭제로 디스크 공간 확보
@@ -352,7 +352,7 @@ jobs:
             # - 포트 바인딩, 상태(Up/Exited) 등 표시
             # - 이 출력은 GitHub Actions 로그에 기록됨
             # - sudo: Docker daemon 접근을 위해 관리자 권한 필요
-            sudo docker compose -f docker-compose.prod.yml ps
+            sudo docker-compose -f docker-compose.prod.yml ps
 
       # ========================================
       # 9. Slack 알림 (선택사항)

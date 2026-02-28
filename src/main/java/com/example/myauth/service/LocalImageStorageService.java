@@ -97,7 +97,9 @@ public class LocalImageStorageService implements ImageStorageService {
       log.info("이미지 저장 완료 - 파일명: {}, 경로: {}", fileName, targetPath);
 
       // 5️⃣ 접근 가능한 URL 생성
-      String imageUrl = baseUrl + "/" + fileName;
+
+//      String imageUrl = baseUrl + "/" + fileName;
+      String imageUrl = "/uploads/" + fileName;
 
       // 6️⃣ 응답 DTO 생성
       return ImageUploadResponse.builder()

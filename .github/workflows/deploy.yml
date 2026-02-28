@@ -289,6 +289,9 @@ jobs:
 
             # 프론트엔드 URL 설정 (CORS 및 OAuth 리다이렉트용)
             FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+            
+            # 이미지 업로드 베이스 URL 설정 (CORS 및 OAuth 리다이렉트용)
+            FILE_UPLOAD_BASE_URL: ${{ secrets.FILE_UPLOAD_BASE_URL }}
 
             # Spring 프로파일
             SPRING_PROFILES_ACTIVE=prod

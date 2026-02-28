@@ -98,8 +98,8 @@ public class LocalImageStorageService implements ImageStorageService {
 
       // 5️⃣ 접근 가능한 URL 생성
 
-//      String imageUrl = baseUrl + "/" + fileName;
-      String imageUrl = "/uploads/" + fileName;
+      String imageUrl = baseUrl + "/" + fileName;
+//      String imageUrl = "/uploads/" + fileName;
 
       // 6️⃣ 응답 DTO 생성
       return ImageUploadResponse.builder()

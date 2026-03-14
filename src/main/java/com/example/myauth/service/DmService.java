@@ -13,7 +13,6 @@ import com.example.myauth.exception.ResourceNotFoundException;
 import com.example.myauth.repository.DmMessageRepository;
 import com.example.myauth.repository.DmRoomReadRepository;
 import com.example.myauth.repository.DmRoomRepository;
-import com.example.myauth.repository.FollowRepository;
 import com.example.myauth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +34,6 @@ public class DmService {
     private final DmMessageRepository dmMessageRepository;
     private final DmRoomReadRepository dmRoomReadRepository;
     private final UserRepository userRepository;
-    private final FollowRepository followRepository;
-
     /**
      * DM 방 생성 또는 기존 방 조회
      * - 자기 자신과의 DM 금지
@@ -52,8 +49,6 @@ public class DmService {
 
         User me = getUserOrThrow(meId);
         User targetUser = getUserOrThrow(targetUserId);
-
-        validateMutualFollow(meId, targetUserId);
 
         Long user1Id = Math.min(meId, targetUserId);
         Long user2Id = Math.max(meId, targetUserId);
@@ -167,9 +162,6 @@ public class DmService {
         validateRoomParticipant(room, meId);
 
         User sender = getUserOrThrow(meId);
-        User peerUser = room.getPeerUser(meId);
-
-        validateMutualFollow(meId, peerUser.getId());
         validateMessageContent(request.getContent());
 
         DmMessage message = DmMessage.of(room, sender, request.getContent());
@@ -237,15 +229,6 @@ public class DmService {
         if (meId.equals(targetUserId)) {
             log.warn("본인에게 DM 시도: meId={}", meId);
             throw new DmPolicyViolationException("본인에게는 DM을 보낼 수 없습니다.");
-        }
-    }
-
-    private void validateMutualFollow(Long meId, Long targetUserId) {
-        boolean isMutualFollow = followRepository.isMutualFollow(meId, targetUserId);
-
-        if (!isMutualFollow) {
-            log.warn("상호 팔로우가 아닌 사용자 간 DM 시도: meId={}, targetUserId={}", meId, targetUserId);
-            throw new DmPolicyViolationException("상호 팔로우한 사용자끼리만 DM을 사용할 수 있습니다.");
         }
     }
 

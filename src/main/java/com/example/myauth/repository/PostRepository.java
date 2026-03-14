@@ -85,6 +85,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
          "ORDER BY p.createdAt DESC")
   Page<Post> findPublicPostsWithUser(Pageable pageable);
 
+  @Query("SELECT p FROM Post p " +
+         "WHERE p.isDeleted = false AND (" +
+         "  p.visibility = 'PUBLIC' " +
+         "  OR (:viewerId IS NOT NULL AND p.user.id = :viewerId) " +
+         "  OR (:viewerId IS NOT NULL AND p.visibility = 'FOLLOWERS' AND EXISTS (" +
+         "    SELECT 1 FROM Follow f WHERE f.follower.id = :viewerId AND f.following.id = p.user.id" +
+         "  ))" +
+         ") ORDER BY p.createdAt DESC")
+  Page<Post> findVisiblePostsForViewer(@Param("viewerId") Long viewerId, Pageable pageable);
+
   // ===== 카운트 업데이트 =====
 
   /**

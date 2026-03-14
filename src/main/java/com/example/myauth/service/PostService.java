@@ -270,11 +270,15 @@ public class PostService {
    */
   @Transactional(readOnly = true)
   public Page<PostListResponse> getPublicPosts(Pageable pageable) {
+    return getVisiblePosts(null, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<PostListResponse> getVisiblePosts(Long viewerId, Pageable pageable) {
     log.info("공개 게시글 목록 조회 - page: {}, size: {}",
         pageable.getPageNumber(), pageable.getPageSize());
 
-    Page<Post> posts = postRepository.findByVisibilityAndIsDeletedFalse(
-        Visibility.PUBLIC, pageable);
+    Page<Post> posts = postRepository.findVisiblePostsForViewer(viewerId, pageable);
 
     return posts.map(PostListResponse::from);
   }

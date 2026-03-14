@@ -177,6 +177,7 @@ public class PostController {
    */
   @GetMapping
   public ResponseEntity<ApiResponse<Page<PostListResponse>>> getPosts(
+      @AuthenticationPrincipal User user,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size
   ) {
@@ -184,7 +185,10 @@ public class PostController {
     if (size > 50) size = 50;
 
     Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-    Page<PostListResponse> posts = postService.getPublicPosts(pageable);
+    Page<PostListResponse> posts = postService.getVisiblePosts(
+        user != null ? user.getId() : null,
+        pageable
+    );
 
     return ResponseEntity.ok(ApiResponse.success("게시글 목록 조회 성공", posts));
   }

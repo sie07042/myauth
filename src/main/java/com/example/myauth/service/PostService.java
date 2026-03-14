@@ -5,6 +5,7 @@ import com.example.myauth.dto.post.*;
 import com.example.myauth.entity.*;
 import com.example.myauth.exception.PostNotFoundException;
 import com.example.myauth.exception.UnauthorizedAccessException;
+import com.example.myauth.repository.FollowRepository;
 import com.example.myauth.repository.PostImageRepository;
 import com.example.myauth.repository.PostRepository;
 import com.example.myauth.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,6 +32,7 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final PostImageRepository postImageRepository;
+  private final FollowRepository followRepository;
   private final UserRepository userRepository;
   private final ImageStorageService imageStorageService;
   private final HashtagService hashtagService;
@@ -285,11 +288,31 @@ public class PostService {
    */
   @Transactional(readOnly = true)
   public Page<PostListResponse> getPostsByUser(Long userId, Pageable pageable) {
+    return getPostsByUser(null, userId, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<PostListResponse> getPostsByUser(Long viewerId, Long userId, Pageable pageable) {
     log.info("사용자별 게시글 목록 조회 - userId: {}, page: {}",
         userId, pageable.getPageNumber());
 
-    Page<Post> posts = postRepository.findByUserIdAndIsDeletedFalseOrderByCreatedAtDesc(
-        userId, pageable);
+    Page<Post> posts;
+
+    if (viewerId != null && viewerId.equals(userId)) {
+      posts = postRepository.findByUserIdAndIsDeletedFalseOrderByCreatedAtDesc(userId, pageable);
+    } else if (viewerId != null && followRepository.existsByFollowerIdAndFollowingId(viewerId, userId)) {
+      posts = postRepository.findByUserIdAndVisibilityInAndIsDeletedFalseOrderByCreatedAtDesc(
+          userId,
+          Arrays.asList(Visibility.PUBLIC, Visibility.FOLLOWERS),
+          pageable
+      );
+    } else {
+      posts = postRepository.findByUserIdAndVisibilityAndIsDeletedFalseOrderByCreatedAtDesc(
+          userId,
+          Visibility.PUBLIC,
+          pageable
+      );
+    }
 
     return posts.map(PostListResponse::from);
   }

@@ -219,6 +219,7 @@ public class PostController {
    */
   @GetMapping("/user/{userId}")
   public ResponseEntity<ApiResponse<Page<PostListResponse>>> getUserPosts(
+      @AuthenticationPrincipal User user,
       @PathVariable Long userId,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size
@@ -226,7 +227,11 @@ public class PostController {
     if (size > 50) size = 50;
 
     Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-    Page<PostListResponse> posts = postService.getPostsByUser(userId, pageable);
+    Page<PostListResponse> posts = postService.getPostsByUser(
+        user != null ? user.getId() : null,
+        userId,
+        pageable
+    );
 
     return ResponseEntity.ok(ApiResponse.success("사용자 게시글 목록 조회 성공", posts));
   }

@@ -58,6 +58,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   Page<Post> findByUserIdAndIsDeletedFalseOrderByCreatedAtDesc(
       Long userId, Pageable pageable);
 
+  Page<Post> findByUserIdAndVisibilityAndIsDeletedFalseOrderByCreatedAtDesc(
+      Long userId, Visibility visibility, Pageable pageable);
+
+  Page<Post> findByUserIdAndVisibilityInAndIsDeletedFalseOrderByCreatedAtDesc(
+      Long userId, java.util.Collection<Visibility> visibilities, Pageable pageable);
+
   /**
    * 공개 게시글 목록 (전체 피드용)
    * @param pageable 페이지 정보

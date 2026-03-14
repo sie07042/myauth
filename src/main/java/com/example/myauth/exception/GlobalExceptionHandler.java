@@ -504,6 +504,64 @@ public class GlobalExceptionHandler {
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(ApiResponse.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));
   }
+
+  /**
+   * DM 방 없음 예외 처리
+   */
+  @ExceptionHandler(DmRoomNotFoundException.class)
+  public ResponseEntity<ApiResponse<Void>> handleDmRoomNotFoundException(DmRoomNotFoundException e) {
+    log.warn("DM 방을 찾을 수 없음: {}", e.getMessage());
+    return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ApiResponse.error(e.getMessage()));
+  }
+
+  /**
+   * DM 접근 권한 없음 예외 처리
+   */
+  @ExceptionHandler(DmAccessDeniedException.class)
+  public ResponseEntity<ApiResponse<Void>> handleDmAccessDeniedException(DmAccessDeniedException e) {
+    log.warn("DM 접근 권한 없음: {}", e.getMessage());
+    return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(ApiResponse.error(e.getMessage()));
+  }
+
+  /**
+   * DM 정책 위반 예외 처리
+   * - 본인에게 DM 시도
+   * - 상호 팔로우 아님
+   * - 다른 방 메시지 읽음 처리 시도 등
+   */
+  @ExceptionHandler(DmPolicyViolationException.class)
+  public ResponseEntity<ApiResponse<Void>> handleDmPolicyViolationException(DmPolicyViolationException e) {
+    log.warn("DM 정책 위반: {}", e.getMessage());
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiResponse.error(e.getMessage()));
+  }
+
+  /**
+   * DM 메시지 유효성 예외 처리
+   */
+  @ExceptionHandler(DmMessageValidationException.class)
+  public ResponseEntity<ApiResponse<Void>> handleDmMessageValidationException(DmMessageValidationException e) {
+    log.warn("DM 메시지 유효성 오류: {}", e.getMessage());
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiResponse.error(e.getMessage()));
+  }
+
+  /**
+   * 공통 리소스 없음 예외 처리
+   */
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException e) {
+    log.warn("리소스를 찾을 수 없음: {}", e.getMessage());
+    return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ApiResponse.error(e.getMessage()));
+  }
 }
 
 
